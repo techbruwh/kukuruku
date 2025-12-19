@@ -121,7 +121,7 @@ cmd_kconfig() {
   fi
   
   # Ask if user wants to change KUBECONFIG
-  read -p "❓ Do you want to set a different KUBECONFIG? (y/n): " -n 1 -r
+  read -p "❓ Do you want to set a different KUBECONFIG? (y/n): " -r
   echo ""
   
   if [[ ! $REPLY =~ ^[Yy]$ ]]; then
@@ -143,24 +143,10 @@ cmd_kconfig() {
   echo ""
   print_success "Selected: $selected"
   echo ""
-  echo "Add this to your ~/.zshrc:"
+  echo "Run this command to add KUBECONFIG to your ~/.zshrc:"
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
   echo "export KUBECONFIG=$selected_path"
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-  echo ""
-  
-  read -p "❓ Apply for current session? (y/n): " -n 1 -r
-  echo ""
-  
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    export KUBECONFIG="$selected_path"
-    print_success "KUBECONFIG set to: $selected_path"
-    
-    # Show contexts in selected config
-    echo ""
-    print_info "Available contexts:"
-    kubectl config get-contexts -o name
-  fi
 }
 
 # Interactive pod exec
