@@ -1,0 +1,17 @@
+#compdef kukuruku ku
+
+_kukuruku() {
+  local -a commands
+  commands=(
+    'help:Show help message'
+    'version:Show version'
+    'ctx:Show current context and namespace'
+    'cctx:Choose context interactively'
+    'kconfig:Manage KUBECONFIG'
+    'exec:Execute command in pod'
+  )
+  
+  _describe 'command' commands
+}
+
+_kukuruku

@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# Kukuruku - Kubernetes CLI Helper
+# The Southeast Asian bird that simplifies your k8s workflow
+
+set -e
+
+VERSION="1.0.0"
+KUKURUKU_HOME="${KUKURUKU_HOME:-$HOME/.kukuruku}"
+
+# Source libraries
+source "$KUKURUKU_HOME/lib/utils.sh"
+source "$KUKURUKU_HOME/lib/commands.sh"
+
+# Main command router
+main() {
+  local cmd="${1:-help}"
+  shift || true
+
+  case "$cmd" in
+    help|--help|-h)
+      cmd_help
+      ;;
+    version|--version|-v)
+      echo "kukuruku v$VERSION"
+      ;;
+    ctx)
+      cmd_ctx
+      ;;
+    cctx)
+      cmd_cctx
+      ;;
+    kconfig)
+      cmd_kconfig "$@"
+      ;;
+    exec)
+      cmd_exec
+      ;;
+    *)
+      echo "❌ Unknown command: $cmd"
+      echo "Run 'ku help' to see available commands"
+      exit 1
+      ;;
+  esac
+}
+
+main "$@"
