@@ -31,7 +31,7 @@ Configuration:
   Status bar is automatically added to your shell prompt.
   Current context and namespace appear as: ☸ cluster [namespace]
 
-Learn more: https://github.com/YOUR_USERNAME/kukuruku
+Learn more: https://github.com/techbruwh/kukuruku
 EOF
 }
 
