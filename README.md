@@ -31,11 +31,13 @@ brew tap techbruwh/kukuruku
 
 # Install
 brew install kukuruku
+```
 
-# Enable status bar
-echo 'source $(brew --prefix)/opt/kukuruku/libexec/lib/prompt.zsh' >> ~/.zshrc
-
-source ~/.zshrc
+### Upgrade Kukuruku
+```bash
+brew update
+brew upgrade kukuruku
+ku version
 ```
 
 ## Usage
