@@ -22,7 +22,7 @@ Examples:
   ku ctx                    # Show current cluster and namespace
   ku cctx                   # Switch contexts interactively
   ku kconfig                # Manage kubeconfig
-  ku exec                   # Interactive pod exec
+  ku execpod                # Interactive pod exec
 
 Prerequisites:
   - kubectl

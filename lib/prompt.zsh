@@ -15,17 +15,16 @@ _kukuruku_prompt() {
   local namespace=$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)
   namespace="${namespace:-default}"
   
-  # Smart abbreviation: extract key parts
-  # Example: "arn:aws:eks:us-west-2:123456:cluster/production-cluster" -> "production-cluster"
   local short_context="$context"
   if [[ "$context" == *"/"* ]]; then
-    short_context="${context##*/}"  # Get everything after last /
+    short_context="${context##*/}"  
   elif [[ "$context" == *":"* ]]; then
-    short_context="${context##*:}"  # Get everything after last :
+    short_context="${context##*:}"  
   fi
   
-  echo " ☸ $short_context [$namespace]"
+  echo " ☸ $context [$namespace]"
 }
 
-# Add to right prompt
-RPROMPT='%{$fg[cyan]%}$(_kukuruku_prompt)%{$reset_color%}'
+# Add to left prompt instead (prepend to existing PROMPT)
+PROMPT='%{$fg[cyan]%}$(_kukuruku_prompt)%{$reset_color%}
+'"$PROMPT"
