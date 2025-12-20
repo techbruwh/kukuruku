@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # Kukuruku - Kubernetes CLI Helper
-# The Southeast Asian bird that simplifies your k8s workflow
 
 set -e
 
@@ -35,6 +34,12 @@ main() {
     exec)
       cmd_exec
       ;;
+    pods)
+      cmd_pods
+      ;;
+    delpod)
+      cmd_delpod
+      ;;
     *)
       echo "❌ Unknown command: $cmd"
       echo "Run 'ku help' to see available commands"
@@ -42,5 +47,3 @@ main() {
       ;;
   esac
 }
-
-main "$@"

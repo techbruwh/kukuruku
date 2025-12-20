@@ -15,7 +15,16 @@ _kukuruku_prompt() {
   local namespace=$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)
   namespace="${namespace:-default}"
   
-  echo " ☸ $context [$namespace]"
+  # Smart abbreviation: extract key parts
+  # Example: "arn:aws:eks:us-west-2:123456:cluster/production-cluster" -> "production-cluster"
+  local short_context="$context"
+  if [[ "$context" == *"/"* ]]; then
+    short_context="${context##*/}"  # Get everything after last /
+  elif [[ "$context" == *":"* ]]; then
+    short_context="${context##*:}"  # Get everything after last :
+  fi
+  
+  echo " ☸ $short_context [$namespace]"
 }
 
 # Add to right prompt

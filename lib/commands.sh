@@ -14,7 +14,9 @@ Commands:
   ctx             Show current context and namespace
   cctx            Choose context using fuzzy search
   kconfig         Manage KUBECONFIG file
-  exec            Execute command in a pod (interactive)
+  execpod         Execute command in a pod (interactive)
+  pods            List pods in namespace (interactive)
+  delpod          Delete a pod (interactive)
 
 Examples:
   ku ctx                    # Show current cluster and namespace
@@ -35,6 +37,99 @@ Learn more: https://github.com/techbruwh/kukuruku
 EOF
 }
 
+# List pods in namespace
+cmd_pods() {
+  check_prereqs || return 1
+  
+  echo "🐦 Kukuruku Pod Listing"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+  
+  # Current namespace
+  local current_ns=$(get_current_namespace)
+  print_info "Current namespace: $current_ns"
+  
+  # Ask for namespace
+  read -p "📦 Namespace (press Enter for '$current_ns', or type 'all' for all namespaces): " namespace
+  namespace="${namespace:-$current_ns}"
+  
+  echo ""
+  print_info "Fetching pods..."
+  echo ""
+  
+  # Build kubectl command
+  if [ "$namespace" = "all" ]; then
+    kubectl get pods --all-namespaces -o wide
+  else
+    kubectl get pods -n "$namespace" -o wide
+  fi
+}
+
+# Delete a pod interactively
+cmd_delpod() {
+  check_prereqs || return 1
+  
+  echo "🐦 Kukuruku Pod Deletion"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+  
+  # Current namespace
+  local current_ns=$(get_current_namespace)
+  print_info "Current namespace: $current_ns"
+  
+  # Ask for namespace
+  read -p "📦 Namespace (press Enter for '$current_ns'): " namespace
+  namespace="${namespace:-$current_ns}"
+  
+  # Fetch pods
+  echo ""
+  print_info "Fetching pods in namespace '$namespace'..."
+  
+  local pods=$(kubectl get pods -n "$namespace" -o name 2>/dev/null | sed 's|pod/||')
+  
+  if [ -z "$pods" ]; then
+    print_error "No pods found in namespace '$namespace'"
+    return 1
+  fi
+  
+  # Select pod with fzf
+  local pod=$(echo "$pods" | fzf --prompt="🐦 Select pod to delete: " --height=40% --border --preview="kubectl get pod {} -n $namespace -o wide 2>/dev/null")
+  
+  if [ -z "$pod" ]; then
+    print_warning "No pod selected"
+    return 0
+  fi
+  
+  # Show pod details and confirm
+  echo ""
+  echo "📝 Pod to delete:"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  kubectl get pod "$pod" -n "$namespace" -o wide
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+  
+  print_warning "⚠️  This will delete pod '$pod' in namespace '$namespace'"
+  read -p "❓ Are you sure? (y/n): " -n 1 -r
+  echo ""
+  
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    print_warning "Cancelled"
+    return 0
+  fi
+  
+  # Delete the pod
+  echo ""
+  print_info "Deleting pod..."
+  kubectl delete pod "$pod" -n "$namespace"
+  
+  if [ $? -eq 0 ]; then
+    print_success "Pod '$pod' deleted successfully"
+  else
+    print_error "Failed to delete pod '$pod'"
+    return 1
+  fi
+}
+
 # Show current context
 cmd_ctx() {
   check_prereqs || return 1
@@ -52,8 +147,13 @@ cmd_ctx() {
   if kubectl cluster-info &>/dev/null; then
     print_success "Connected to cluster"
     kubectl cluster-info | grep -E "(master|control plane)" | head -1
+  # Fallback: check if we can access any resources (works for users with limited RBAC)
+  elif kubectl auth can-i get pods --namespace="$namespace" &>/dev/null || \
+       kubectl get pods --namespace="$namespace" --limit=1 &>/dev/null 2>&1; then
+    print_success "Connected to cluster (limited permissions)"
+    echo "  Cluster access verified via namespace resources"
   else
-    print_error "Not connected to cluster"
+    print_error "Not connected to cluster or insufficient permissions"
   fi
 }
 
