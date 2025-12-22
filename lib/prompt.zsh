@@ -12,16 +12,25 @@ _kukuruku_prompt() {
     return
   fi
   
-  # Smart abbreviation: extract key parts
-  local short_context="$context"
-  if [[ "$context" == *"/"* ]]; then
-    short_context="${context##*/}"  # Get everything after last /
-  elif [[ "$context" == *":"* ]]; then
-    short_context="${context##*:}"  # Get everything after last :
+  local namespace=$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)
+  namespace="${namespace:-default}"
+  
+  # Color code by namespace type
+  local color="cyan"  # default color
+  if [[ "$namespace" == *"prod"* ]]; then
+    color="red"
+  elif [[ "$namespace" == *"stage"* ]] || [[ "$namespace" == *"staging"* ]]; then
+    color="yellow"
+  elif [[ "$namespace" == *"dev"* ]]; then
+    color="green"
+  elif [[ "$namespace" == *"alpha"* ]]; then
+    color="magenta"
+  elif [[ "$namespace" == "default" ]]; then
+    color="blue"
   fi
   
-  echo " ☸ $short_context"
+  echo "%{$fg[$color]%}☸ $namespace%{$reset_color%}"
 }
 
-# Add to right prompt (one line with home directory)
-RPROMPT='%{$fg[cyan]%}$(_kukuruku_prompt)%{$reset_color%}'
+# Add to left prompt (prepend to existing PROMPT)
+PROMPT='$(_kukuruku_prompt) '"${PROMPT}"
