@@ -29,8 +29,8 @@ _kukuruku_prompt() {
     color="blue"
   fi
   
-  echo "[☸ %{$fg[$color]%}$namespace%{$reset_color%}] "
+  echo "%{$fg[$color]%}☸ $namespace%{$reset_color%}"
 }
 
-# Add to left prompt (prepend to existing PROMPT)
-PROMPT='$(_kukuruku_prompt)'"${PROMPT}"
+# Add to right prompt
+RPROMPT='$(_kukuruku_prompt)'
