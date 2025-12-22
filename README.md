@@ -34,6 +34,8 @@ brew install kukuruku
 
 # Enable the status bar by adding this to your ~/.zshrc:
 echo 'source $(brew --prefix)/opt/kukuruku/libexec/lib/prompt.zsh' >> ~/.zshrc
+
+source ~/.zshrc
 ```
 
 ### Upgrade Kukuruku
