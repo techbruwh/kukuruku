@@ -31,6 +31,9 @@ brew tap techbruwh/kukuruku
 
 # Install
 brew install kukuruku
+
+# Enable the status bar by adding this to your ~/.zshrc:
+echo 'source $(brew --prefix)/opt/kukuruku/libexec/lib/prompt.zsh' >> ~/.zshrc
 ```
 
 ### Upgrade Kukuruku
@@ -38,6 +41,9 @@ brew install kukuruku
 brew update
 brew upgrade kukuruku
 ku version
+
+# Reload your shell
+source ~/.zshrc
 ```
 
 ## Usage
@@ -123,8 +129,11 @@ alias ku="./bin/kukuruku"
 ```bash
 brew uninstall kukuruku
 
-# Remove from ~/.zshrc
-# Delete the line: source $(brew --prefix)/opt/kukuruku/lib/prompt.zsh
+# Remove the prompt line from ~/.zshrc
+# Delete this line: source $(brew --prefix)/opt/kukuruku/libexec/lib/prompt.zsh
+
+# Or use sed to remove it automatically:
+sed -i.bak '/kukuruku.*prompt\.zsh/d' ~/.zshrc
 ```
 
 ## License
