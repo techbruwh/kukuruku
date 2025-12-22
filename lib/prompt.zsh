@@ -22,9 +22,9 @@ _kukuruku_prompt() {
     short_context="${context##*:}"  
   fi
   
-  echo " ☸ $context [$namespace]"
+  echo " ☸ $short_context [$namespace]"
 }
 
-# Add to left prompt instead (prepend to existing PROMPT)
+# Add to left prompt
 PROMPT='%{$fg[cyan]%}$(_kukuruku_prompt)%{$reset_color%}
-'"$PROMPT"
+'"${PROMPT}"
